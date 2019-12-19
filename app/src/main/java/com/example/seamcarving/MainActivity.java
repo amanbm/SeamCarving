@@ -23,15 +23,14 @@ public class MainActivity extends AppCompatActivity {
         cropHButton = findViewById(R.id.cropHButton);
         cropVButton = findViewById(R.id.cropVButton);
         image = findViewById(R.id.imageView);
-        image.setImageResource(R.drawable.sig);
-        image.setScaleY(10);
+        image.setImageResource(R.drawable.howard);
 
 
         // Crop horizontal
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                image.setMaxHeight((int) Math.round((image.getHeight() * 9.0) / 10.0));
+
             }
         });
 
@@ -39,10 +38,8 @@ public class MainActivity extends AppCompatActivity {
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                image.setMaxWidth((int) Math.round((image.getWidth() * 9.0) / 10.0));
+
             }
         });
-
-
     }
 }
