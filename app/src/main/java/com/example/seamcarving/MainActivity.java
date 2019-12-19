@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
         cropHButton = findViewById(R.id.cropHButton);
         cropVButton = findViewById(R.id.cropVButton);
         image = findViewById(R.id.imageView);
+        image.setImageResource(R.drawable.sig);
+        image.setScaleY(10);
+
 
         // Crop horizontal
         cropHButton.setOnClickListener(new View.OnClickListener() {
