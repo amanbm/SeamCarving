@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cropHButton = (Button) findViewById(R.id.cropHButton);
-        cropVButton = (Button) findViewById(R.id.cropVButton);
-        image = (ImageView) findViewById(R.id.imageView);
+        cropHButton = findViewById(R.id.cropHButton);
+        cropVButton = findViewById(R.id.cropVButton);
+        image = findViewById(R.id.imageView);
 
 
 
