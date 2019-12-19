@@ -24,13 +24,19 @@ public class MainActivity extends AppCompatActivity {
         cropVButton = findViewById(R.id.cropVButton);
         image = findViewById(R.id.imageView);
 
+        // Crop horizontal
+        cropHButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                image.setMaxHeight((int) Math.round((image.getHeight() * 9.0) / 10.0));
+            }
+        });
 
-
+        // Crop vertical
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                image.setMaxWidth(image.getWidth() - 10);
-
+                image.setMaxWidth((int) Math.round((image.getWidth() * 9.0) / 10.0));
             }
         });
 
