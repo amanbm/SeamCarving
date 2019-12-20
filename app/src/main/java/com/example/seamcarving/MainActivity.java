@@ -9,7 +9,8 @@ import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private int x;
+    private int y;
     Button cropHButton;
     Button cropVButton;
     ImageView image;
@@ -19,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        x = 0;
+        y = 0;
         cropHButton = findViewById(R.id.cropHButton);
         cropVButton = findViewById(R.id.cropVButton);
         image = findViewById(R.id.imageView);
@@ -30,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                x++;
+                image.setScaleX(x);
             }
         });
 
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                y++;
+                image.setScaleY(y);
             }
         });
     }
