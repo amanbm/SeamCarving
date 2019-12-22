@@ -184,4 +184,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     public int size() {
         return size;
     }
+
+
+    /** Returns true if the PQ is empty; false otherwise. */
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 }

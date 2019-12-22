@@ -40,8 +40,5 @@ public interface ExtrinsicMinPQ<T> {
     /** Returns the number of items in the PQ. */
     int size();
 
-    /** Returns true if the PQ is empty; false otherwise. */
-    default boolean isEmpty() {
-        return size() == 0;
-    }
+
 }
