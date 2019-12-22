@@ -25,8 +25,7 @@ import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
-    private int x;
-    private int y;
+
     Button cropHButton;
     Button cropVButton;
     Button captureButton;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
 
-    String currentPhotoPath;
+    private String currentPhotoPath;
 
 
     private static String[] PERMISSIONS_STORAGE = {
@@ -75,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        x = 0;
-        y = 0;
 
         cropHButton = findViewById(R.id.cropHButton);
         cropVButton = findViewById(R.id.cropVButton);
@@ -101,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                x++;
-                imageView.setScaleX(x);
+
             }
         });
 
@@ -111,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                y++;
-                imageView.setScaleY(y);
+
             }
         });
     }
