@@ -12,7 +12,7 @@ public class AStarSolver<Vertex> {
     private AStarGraph<Vertex> input;
     private List<Vertex> solution;
     private Vertex end;
-    private ExtrinsicMinPQ<Vertex> explore;
+    private ArrayHeapMinPQ<Vertex> explore;
     private Map<Vertex, Vertex> toParent;
     private Map<Vertex, Double> toWeight;
     private int numStatesExplored;
@@ -23,7 +23,7 @@ public class AStarSolver<Vertex> {
      * search, computing everything necessary for all other methods to return
      * their results in constant time. The timeout is given in seconds.
      */
-    public AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end, double timeout) {
+    public AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end) {
         this.input = input;
         this.solution = new ArrayList<>();
         this.toParent = new HashMap<>();

@@ -1,16 +1,11 @@
 package com.example.seamcarving;
 
 import android.graphics.Bitmap;
-
-import astar.AStarGraph;
-import astar.WeightedEdge;
-import edu.princeton.cs.algs4.Picture;
-
-import java.awt.Color;
+import android.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerticalBitmapGraph {
+public class VerticalBitmapGraph implements AStarGraph<Point> {
 
     private Bitmap picture;
 
@@ -20,8 +15,8 @@ public class VerticalBitmapGraph {
 
     public List<WeightedEdge<Point>> neighbors(Point p) {
         List<WeightedEdge<Point>> neighbors = new ArrayList<>();
-        if (p.y() >= picture.height() - 1) { // V
-            neighbors.add(new WeightedEdge<>(p, new Point(0, picture.height()), 0)); // V
+        if (p.y() >= picture.getHeight() - 1) { // V
+            neighbors.add(new WeightedEdge<>(p, new Point(0, picture.getHeight()), 0)); // V
             return neighbors;
         } else if (p.equals(new Point(0, -1))) { // V root ^
             add(neighbors); // V
@@ -35,14 +30,14 @@ public class VerticalBitmapGraph {
 
     private void add(List<WeightedEdge<Point>> neighbors) {
         Point from = new Point(0, -1); // V
-        for (int i = 0; i < picture.width(); i++) { // V
+        for (int i = 0; i < picture.getWidth(); i++) { // V
             Point to = new Point(i, 0); // V
             neighbors.add(new WeightedEdge<>(from, to, energy((int) to.x(), (int) to.y())));
         }
     }
 
     private void add(List<WeightedEdge<Point>> neighbors, Point from, Point to) {
-        if (to.x() < picture.width() && to.x() >= 0) { //V
+        if (to.x() < picture.getWidth() && to.x() >= 0) { //V
             neighbors.add(new WeightedEdge<>(from, to, energy((int) to.x(), (int) to.y())));
         }
     }
@@ -52,21 +47,21 @@ public class VerticalBitmapGraph {
     }
 
     private double energy(int x, int y) {
-        if (x < 0 || x > picture.width() - 1 || y < 0 || y > picture.height() - 1) {
-            System.out.println("\n" + picture.width() + " | x = " + x);
-            System.out.println(picture.height() + " | y = " + y);
+        if (x < 0 || x > picture.getWidth() - 1 || y < 0 || y > picture.getHeight() - 1) {
+            System.out.println(picture.getWidth() + " | x = " + x);
+            System.out.println(picture.getHeight() + " | y = " + y);
             throw new IndexOutOfBoundsException();
         }
-        Color north = y != 0 ? picture.get(x, y - 1) : picture.get(x, picture.height() - 1);
-        Color south = y != picture.height() - 1 ? picture.get(x, y + 1) : picture.get(x, 0);
-        Color east = x != picture.width() - 1 ? picture.get(x + 1, y) : picture.get(0, y);
-        Color west = x != 0 ? picture.get(x - 1, y) : picture.get(picture.width() - 1, y);
-        int rx = Math.abs(east.getRed() - west.getRed());
-        int gx = Math.abs(east.getGreen() - west.getGreen());
-        int bx = Math.abs(east.getBlue() - west.getBlue());
-        int ry = Math.abs(north.getRed() - south.getRed());
-        int gy = Math.abs(north.getGreen() - south.getGreen());
-        int by = Math.abs(north.getBlue() - south.getBlue());
+        int north = y != 0 ? picture.getPixel(x, y - 1) : picture.getPixel(x, picture.getHeight() - 1);
+        int south = y != picture.getHeight() - 1 ? picture.getPixel(x, y + 1) : picture.getPixel(x, 0);
+        int east = x != picture.getWidth() - 1 ? picture.getPixel(x + 1, y) : picture.getPixel(0, y);
+        int west = x != 0 ? picture.getPixel(x - 1, y) : picture.getPixel(picture.getWidth() - 1, y);
+        int rx = Math.abs(Color.red(east) - Color.red(west));
+        int gx = Math.abs(Color.green(east) - Color.green(west));
+        int bx = Math.abs(Color.blue(east) - Color.blue(west));
+        int ry = Math.abs(Color.red(north) - Color.red(south));
+        int gy = Math.abs(Color.green(north) - Color.green(south));
+        int by = Math.abs(Color.blue(north) - Color.blue(south));
         return Math.sqrt(p2(rx) + p2(gx) + p2(bx) + p2(ry) + p2(gy) + p2(by));
     }
 

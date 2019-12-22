@@ -25,31 +25,33 @@ public class AStarSeamCarver {
     }
 
     public int width() {
-        return picture.width();
+        return picture.getWidth();
     }
 
     public int height() {
-        return picture.height();
+        return picture.getHeight();
     }
 
+    /* TODO ?????
     public Color get(int x, int y) {
-        return picture.get(x, y);
-    }
+        int pixel = picture.getPixel(x, y);
+        return Color.valueOf((Color.red(pixel), Color.green(pixel), Color.blue(pixel)));
+    }*/
 
-    public double energy(int x, int y) {
-        if (x < 0 || x > picture.width() - 1 || y < 0 || y > picture.height() - 1) {
+    private double energy(int x, int y) {
+        if (x < 0 || x > picture.getWidth() - 1 || y < 0 || y > picture.getHeight() - 1) {
             throw new IndexOutOfBoundsException();
         }
-        Color north = y != 0 ? picture.get(x, y - 1) : picture.get(x, picture.height() - 1);
-        Color south = y != picture.height() - 1 ? picture.get(x, y + 1) : picture.get(x, 0);
-        Color east = x != picture.width() - 1 ? picture.get(x + 1, y) : picture.get(0, y);
-        Color west = x != 0 ? picture.get(x - 1, y) : picture.get(picture.width() - 1, y);
-        int rx = Math.abs(east.getRed() - west.getRed());
-        int gx = Math.abs(east.getGreen() - west.getGreen());
-        int bx = Math.abs(east.getBlue() - west.getBlue());
-        int ry = Math.abs(north.getRed() - south.getRed());
-        int gy = Math.abs(north.getGreen() - south.getGreen());
-        int by = Math.abs(north.getBlue() - south.getBlue());
+        int north = y != 0 ? picture.getPixel(x, y - 1) : picture.getPixel(x, picture.getHeight() - 1);
+        int south = y != picture.getHeight() - 1 ? picture.getPixel(x, y + 1) : picture.getPixel(x, 0);
+        int east = x != picture.getWidth() - 1 ? picture.getPixel(x + 1, y) : picture.getPixel(0, y);
+        int west = x != 0 ? picture.getPixel(x - 1, y) : picture.getPixel(picture.getWidth() - 1, y);
+        int rx = Math.abs(Color.red(east) - Color.red(west));
+        int gx = Math.abs(Color.green(east) - Color.green(west));
+        int bx = Math.abs(Color.blue(east) - Color.blue(west));
+        int ry = Math.abs(Color.red(north) - Color.red(south));
+        int gy = Math.abs(Color.green(north) - Color.green(south));
+        int by = Math.abs(Color.blue(north) - Color.blue(south));
         return Math.sqrt(p2(rx) + p2(gx) + p2(bx) + p2(ry) + p2(gy) + p2(by));
     }
 
@@ -60,16 +62,16 @@ public class AStarSeamCarver {
     public int[] findHorizontalSeam() {
         HorizontalBitmapGraph pgh = new HorizontalBitmapGraph(picture);
         Point start = new Point(-1, 0);
-        Point end = new Point(picture.width(), 0);
-        AStarSolver<Point> horizontalSeam = new AStarSolver<>(pgh, start, end, Integer.MAX_VALUE);
+        Point end = new Point(picture.getWidth(), 0);
+        AStarSolver<Point> horizontalSeam = new AStarSolver<>(pgh, start, end);
         return solutionToInt(horizontalSeam.solution(), true);
     }
 
     public int[] findVerticalSeam() {
         VerticalBitmapGraph pgv = new VerticalBitmapGraph(picture);
         Point start = new Point(0, -1);
-        Point end = new Point(0, picture.height());
-        AStarSolver<Point> verticalSeam = new AStarSolver<>(pgv, start, end, Integer.MAX_VALUE);
+        Point end = new Point(0, picture.getHeight());
+        AStarSolver<Point> verticalSeam = new AStarSolver<>(pgv, start, end);
         return solutionToInt(verticalSeam.solution(), false);
     }
 
