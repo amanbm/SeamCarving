@@ -2,12 +2,14 @@ package com.example.seamcarving;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
     Button cropVButton;
     Button captureButton;
     ImageView imageView;
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+
     String currentPhotoPath;
 
 
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_IMAGE_CAPTURE
             );
         }
+
+
         int permissionC = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
         if (permissionC != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -109,10 +116,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                System.out.println("AYAH");
+            }
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+
         }
     }
 
@@ -142,5 +168,4 @@ public class MainActivity extends AppCompatActivity {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 }
