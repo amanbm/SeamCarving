@@ -10,7 +10,7 @@ public class AStarSeamCarver {
     private Bitmap picture;
 
     public AStarSeamCarver(Bitmap bitmap) {
-        if (picture == null) {
+        if (bitmap == null) {
             throw new NullPointerException("Picture cannot be null.");
         }
         this.picture = bitmap; //

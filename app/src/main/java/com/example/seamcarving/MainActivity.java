@@ -17,20 +17,25 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
-    private int x;
-    private int y;
+
+    Bitmap currBitmap;
     Button cropHButton;
     Button cropVButton;
     Button captureButton;
+    TextView textView;
     ImageView imageView;
+    AStarSeamCarver sc;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -77,8 +82,21 @@ public class MainActivity extends AppCompatActivity {
         cropHButton = findViewById(R.id.cropHButton);
         cropVButton = findViewById(R.id.cropVButton);
         imageView = findViewById(R.id.imageView);
+        textView = findViewById(R.id.resultOfSeamCarve);
         captureButton = findViewById(R.id.captureButton);
+
         verifyStoragePermissions(this);
+
+
+        //
+        Bitmap b = BitmapFactory.decodeResource(this.getResources(), R.drawable.test10);
+        sc = new AStarSeamCarver(b);
+        textView.setText(Arrays.toString(sc.findVerticalSeam()));
+        //
+
+
+
+
 
         // Take new picture
         captureButton.setOnClickListener(new View.OnClickListener() {
@@ -94,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                x++;
-                imageView.setScaleX(x);
+
             }
         });
 
@@ -104,8 +121,7 @@ public class MainActivity extends AppCompatActivity {
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                y++;
-                imageView.setScaleY(y);
+
             }
         });
     }
@@ -141,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
             imageView.setImageBitmap(bitmap);
+            currBitmap = bitmap;
         }
     }
 
