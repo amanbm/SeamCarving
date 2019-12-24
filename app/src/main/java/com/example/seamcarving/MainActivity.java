@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -87,16 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         verifyStoragePermissions(this);
 
-
         //
         Bitmap b = BitmapFactory.decodeResource(this.getResources(), R.drawable.test10);
         sc = new AStarSeamCarver(b);
-        textView.setText(Arrays.toString(sc.findVerticalSeam()));
+        textView.setText("" + sc.energy(1, 0));
+        //textView.setText(Arrays.toString(sc.findVerticalSeam()));
+        //textView.setText("" + Color.red(b.getPixel(2, 2)));
         //
-
-
-
-
 
         // Take new picture
         captureButton.setOnClickListener(new View.OnClickListener() {

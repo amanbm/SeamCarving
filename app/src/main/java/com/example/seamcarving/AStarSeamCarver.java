@@ -2,7 +2,6 @@ package com.example.seamcarving;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Picture;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class AStarSeamCarver {
         return Color.valueOf((Color.red(pixel), Color.green(pixel), Color.blue(pixel)));
     }*/
 
-    private double energy(int x, int y) {
+    public double energy(int x, int y) {
         if (x < 0 || x > picture.getWidth() - 1 || y < 0 || y > picture.getHeight() - 1) {
             throw new IndexOutOfBoundsException();
         }
