@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -76,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,102 +107,80 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("");
 
                 //testCode TODO: Change back to picture taken from device storage
-                /*currBitmap = BitmapFactory.decodeResource(MainActivity.super.getResources(), R.drawable.chameleon);
+                currBitmap = BitmapFactory.decodeResource(MainActivity.super.getResources(), R.drawable.chameleon);
                 sc = new AStarSeamCarver(currBitmap);
-                imageView.setImageBitmap(currBitmap);*/
+                imageView.setImageBitmap(currBitmap);
 
 
-
-                dispatchTakePictureIntent();
+                //dispatchTakePictureIntent();
             }
         });
 
-        //TODO: Make crop FasST
+        //TODO: Make crop >>> SANIC SPEED >>>
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currBitmap == null){
-                    textView.setText("Please input picture");
-                } else {
-                    int numSeams;
-                    if(seamCropNum.getText().toString().equals("")){
-                        numSeams = 2;
-                    } else {
-                        numSeams = Integer.parseInt(seamCropNum.getText().toString());
-                    }
-
-                    // loop over edit text num seams to delete
-                    for(int i = 0; i < numSeams; i++) {
-                        int[] horizontalRes = sc.findHorizontalSeam();
-                        Bitmap newBitmap = Bitmap.createBitmap(currBitmap.getWidth(), currBitmap.getHeight() - 1, currBitmap.getConfig());
-                        for(int j = 0; j < newBitmap.getWidth(); j++){
-                            for(int k = 0; k < horizontalRes[j]; k++){
-                                newBitmap.setPixel(j, k, Color.argb(Color.alpha(currBitmap.getPixel(j, k)), Color.red(currBitmap.getPixel(j, k)), Color.green(currBitmap.getPixel(j, k)), Color.blue(currBitmap.getPixel(j, k))));
-                            }
-                            for(int k = horizontalRes[j]+1; k < newBitmap.getHeight(); k++){
-                                newBitmap.setPixel(j, k-1, Color.argb(Color.alpha(currBitmap.getPixel(j, k)), Color.red(currBitmap.getPixel(j, k)), Color.green(currBitmap.getPixel(j, k)), Color.blue(currBitmap.getPixel(j, k))));
-                            }
-                        }
-                        currBitmap = newBitmap;
-                        sc = new AStarSeamCarver(currBitmap);
-                    }
-                    imageView.setImageBitmap(currBitmap);
-
-                    if (numSeams > 1) {
-                        textView.setText("Deleted " + numSeams + " horizontal seams");
-                    } else {
-                        textView.setText("Deleted " + numSeams + " horizontal seam");
-                    }
-
-                }
+                crop(true);
             }
         });
-
-
 
         // TODO: make crop FaST
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currBitmap == null){
-                    textView.setText("Please input picture");
-                } else {
-                    int numSeams;
-                    if(seamCropNum.getText().toString().equals("")){
-                        numSeams = 2;
-                    } else {
-                        numSeams = Integer.parseInt(seamCropNum.getText().toString());
-                    }
-
-                    // loop over edit text num seams to delete
-                    for(int i = 0; i < numSeams; i++) {
-                        int[] verticalRes = sc.findVerticalSeam();
-                        Bitmap newBitmap = Bitmap.createBitmap(currBitmap.getWidth() - 1, currBitmap.getHeight(), currBitmap.getConfig());
-                        for(int j = 0; j < newBitmap.getHeight(); j++){
-                            for(int k = 0; k < verticalRes[j]; k++){
-                                newBitmap.setPixel(k, j, Color.argb(Color.alpha(currBitmap.getPixel(k, j)), Color.red(currBitmap.getPixel(k, j)), Color.green(currBitmap.getPixel(k, j)), Color.blue(currBitmap.getPixel(k, j))));
-                            }
-                            for(int k = verticalRes[j]+1; k < newBitmap.getWidth(); k++){
-                                newBitmap.setPixel(k-1, j, Color.argb(Color.alpha(currBitmap.getPixel(k, j)), Color.red(currBitmap.getPixel(k, j)), Color.green(currBitmap.getPixel(k, j)), Color.blue(currBitmap.getPixel(k, j))));
-                            }
-                        }
-                        currBitmap = newBitmap;
-                        sc = new AStarSeamCarver(currBitmap);
-                    }
-                    imageView.setImageBitmap(currBitmap);
-
-                    if (numSeams > 1) {
-                        textView.setText("Deleted " + numSeams + " vertical seams");
-                    } else {
-                        textView.setText("Deleted " + numSeams + " vertical seam");
-                    }
-
-                }
+                crop(false);
             }
         });
     }
 
+    private void crop(boolean horizontal) {
+        if (currBitmap == null) {
+            textView.setText("Please input picture");
+        } else {
+            int dimension = horizontal ? currBitmap.getHeight() : currBitmap.getWidth();
+            int numSeams = dimension / 10;
+            if (!seamCropNum.getText().toString().equals("")) {
+                numSeams = Integer.parseInt(seamCropNum.getText().toString());
+                if (numSeams > dimension)
+                    throw new IllegalArgumentException("Too many seams. The image isn't large enough.");
+            }
 
+            int newWidth = currBitmap.getWidth() - (horizontal ? 0 : numSeams);
+            int newHeight= currBitmap.getHeight()- (horizontal ? numSeams : 0);
+            Bitmap newBitmap = Bitmap.createBitmap(newWidth, newHeight, currBitmap.getConfig());
+            SparseArray<Set<Integer>> deleted = new SparseArray<>();
+
+            // find all seam pixels to delete
+            for (int i = 0; i < numSeams; i++) {
+                int[] seam = horizontal ? sc.findHorizontalSeam() : sc.findVerticalSeam();
+                //checks(sc, seam);
+                for (int x = 0; x < seam.length; x++) {
+                    int y = seam[x];
+                    if (deleted.get(x) != null) {
+                        deleted.get(x).add(y);
+                    } else {
+                        Set<Integer> yVals = new HashSet<>();
+                        yVals.add(y);
+                        deleted.put(x, yVals);
+                    }
+                }
+            }
+
+            // create new image without deleted pixels
+            for (int x = 0; x < (horizontal ? newWidth : newHeight); x++)
+                for (int scY = 0, carvedY = 0; scY < (horizontal ? currBitmap.getHeight() : currBitmap.getWidth()); scY++, carvedY++) {
+                    if (deleted.get(x).contains(scY)) // if we want to skip this pixel
+                        carvedY--;
+                    else
+                        newBitmap.setPixel(x, carvedY, currBitmap.getPixel(x, scY));
+                }
+
+            currBitmap = newBitmap;
+            imageView.setImageBitmap(currBitmap);
+
+            textView.setText("Deleted " + numSeams + " horizontal seam" + (numSeams > 1 ? "s" : ""));
+        }
+    }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -224,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -234,8 +214,6 @@ public class MainActivity extends AppCompatActivity {
             sc = new AStarSeamCarver(currBitmap);
         }
     }
-
-
 
     private File createImageFile() throws IOException {
         // Create an image file name

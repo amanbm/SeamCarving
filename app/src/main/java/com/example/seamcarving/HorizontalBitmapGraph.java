@@ -5,13 +5,16 @@ import android.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class HorizontalBitmapGraph implements AStarGraph<Point> {
 
     private Bitmap picture;
+    private Set<Point> seamPoints;
 
-    public HorizontalBitmapGraph(Bitmap picture) {
+    public HorizontalBitmapGraph(Bitmap picture, Set<Point> seamPoints) {
         this.picture = picture;
+        this.seamPoints = seamPoints;
     }
 
     public List<WeightedEdge<Point>> neighbors(Point p) {
@@ -49,10 +52,10 @@ public class HorizontalBitmapGraph implements AStarGraph<Point> {
 
     private double energy(int x, int y) {
         if (x < 0 || x > picture.getWidth() - 1 || y < 0 || y > picture.getHeight() - 1) {
-            System.out.println(picture.getWidth() + " | x = " + x);
-            System.out.println(picture.getHeight() + " | y = " + y);
             throw new IndexOutOfBoundsException();
         }
+        if (seamPoints.contains(new Point(x, y)))
+            return Double.MAX_VALUE;
         int north = y != 0 ? picture.getPixel(x, y - 1) : picture.getPixel(x, picture.getHeight() - 1);
         int south = y != picture.getHeight() - 1 ? picture.getPixel(x, y + 1) : picture.getPixel(x, 0);
         int east = x != picture.getWidth() - 1 ? picture.getPixel(x + 1, y) : picture.getPixel(0, y);
