@@ -5,6 +5,9 @@ import android.graphics.Color;
 
 import java.util.List;
 
+
+
+
 public class AStarSeamCarver {
     private Bitmap picture;
 
