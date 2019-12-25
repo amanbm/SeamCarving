@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //TODO: Make crop FasST
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // TODO: make crop work with seam carving
+        // TODO: make crop FaST
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
