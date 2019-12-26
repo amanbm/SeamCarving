@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     EditText seamCropNum;
     ImageView imageView;
-    AStarSeamCarver sc;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -108,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //testCode TODO: Change back to picture taken from device storage
                 currBitmap = BitmapFactory.decodeResource(MainActivity.super.getResources(), R.drawable.chameleon);
-                sc = new AStarSeamCarver(currBitmap);
                 imageView.setImageBitmap(currBitmap);
 
 
@@ -120,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
         cropHButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                crop(true);
+                try {
+                    crop(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -128,25 +130,31 @@ public class MainActivity extends AppCompatActivity {
         cropVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                crop(false);
+                try {
+                    crop(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
-    private void crop(boolean horizontal) {
+    private void crop(boolean horizontal) throws Exception {
         if (currBitmap == null) {
             textView.setText("Please input picture");
         } else {
-            int dimension = horizontal ? currBitmap.getHeight() : currBitmap.getWidth();
-            int numSeams = dimension / 10;
+            AStarSeamCarver sc = new AStarSeamCarver(currBitmap);
+            int decreasing = horizontal ? currBitmap.getHeight() : currBitmap.getWidth();
+            int remaining = horizontal ? currBitmap.getWidth() : currBitmap.getHeight();
+            int numSeams = 3;
             if (!seamCropNum.getText().toString().equals("")) {
                 numSeams = Integer.parseInt(seamCropNum.getText().toString());
-                if (numSeams > dimension)
+                if (numSeams > decreasing)
                     throw new IllegalArgumentException("Too many seams. The image isn't large enough.");
             }
 
             int newWidth = currBitmap.getWidth() - (horizontal ? 0 : numSeams);
-            int newHeight= currBitmap.getHeight()- (horizontal ? numSeams : 0);
+            int newHeight = currBitmap.getHeight() - (horizontal ? numSeams : 0);
             Bitmap newBitmap = Bitmap.createBitmap(newWidth, newHeight, currBitmap.getConfig());
             SparseArray<Set<Integer>> deleted = new SparseArray<>();
 
@@ -167,13 +175,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // create new image without deleted pixels
-            for (int x = 0; x < (horizontal ? newWidth : newHeight); x++)
-                for (int scY = 0, carvedY = 0; scY < (horizontal ? currBitmap.getHeight() : currBitmap.getWidth()); scY++, carvedY++) {
-                    if (deleted.get(x).contains(scY)) // if we want to skip this pixel
-                        carvedY--;
-                    else
-                        newBitmap.setPixel(x, carvedY, currBitmap.getPixel(x, scY));
+            // to debug, pretend horizontal is always true and we are testing horizontal carving
+            for (int x = 0; x < remaining; x++) {
+                int setter = 0;
+                for (int y = 0; y < decreasing; y++) {
+                    if (!deleted.get(x).contains(y)) { // if we want to keep this pixel
+                        int pixel = currBitmap.getPixel(x, y);
+                        if (setter >= newHeight)
+                            throw new Exception((setter + " = setter; " + newHeight + " = newheight.\ny = " + y + "; " + currBitmap.getHeight() + "= oldH"));
+                        newBitmap.setPixel(x, setter, pixel);
+                        setter++;
+                    }
                 }
+            }
 
             currBitmap = newBitmap;
             imageView.setImageBitmap(currBitmap);
@@ -211,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
             imageView.setImageBitmap(bitmap);
             currBitmap = bitmap;
-            sc = new AStarSeamCarver(currBitmap);
         }
     }
 
